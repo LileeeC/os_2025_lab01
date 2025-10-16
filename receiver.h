@@ -1,3 +1,4 @@
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,24 +13,25 @@
 #include <semaphore.h>
 #include <time.h>
 
+/* ---- Shared constants ---- */
 #define MSG_PASSING 1
-#define SHARED_MEM 2
+#define SHARED_MEM  2
+#define MAX_MSG     1024
+#define EXIT_TAG    "__EXIT__"
 
+/* ---- TA minimal mailbox: flag + storage ---- */
 typedef struct {
-    int flag;      // 1 for message passing, 2 for shared memory
-    union{
-        int msqid; //for system V api. You can replace it with structure for POSIX api
-        char* shm_addr;
-    }storage;
+    int flag;  // 1 for message passing, 2 for shared memory
+    union {
+        int  msqid;     // System V message queue id
+        char *shm_addr; // Shared memory address
+    } storage;
 } mailbox_t;
 
-
+/* ---- Message wrapper ---- */
 typedef struct {
-    /*  TODO: 
-        Message structure for wrapper
-    */
     long mType;
-    char msgText[1024];
+    char msgText[MAX_MSG];
 } message_t;
 
 void receive(message_t* message_ptr, mailbox_t* mailbox_ptr);
